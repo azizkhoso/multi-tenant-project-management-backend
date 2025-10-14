@@ -20,6 +20,7 @@ export interface ICompany {
   fullName: string;
   phone: string;
   address: string;
+  isVerified: boolean; // should become true when super admin verifies the company
 }
 
 export interface ICompanyAdmin extends IUser {
