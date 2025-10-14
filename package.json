@@ -1,0 +1,28 @@
+{
+  "name": "multi-tenant-project-management-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "azizkhoso586@gmail.com",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.7.2",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.3",
+    "sequelize": "^6.37.7",
+    "sequelize-typescript": "^2.1.6",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3",
+    "yup": "^1.7.1"
+  }
+}
