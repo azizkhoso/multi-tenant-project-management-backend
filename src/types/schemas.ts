@@ -1,11 +1,38 @@
 import * as yup from 'yup';
 
 // utility schemas
-export const emailSchema = yup.string().email();
-export const passwordSchema = yup.string().min(8);
+export const emailSchema = () => yup.string().email();
+export const passwordSchema = () => yup.string().min(8);
+
+export const titleSchema = () => yup.string().min(3).max(100);
+export const categorySchema = () => yup.string().min(3).max(50);
+export const descriptionSchema = () => yup.string().min(10).max(1000);
+export const idSchema = () => yup.string().uuid();
 
 // composite schemas
 export const loginSchema = yup.object({
-  email: emailSchema.required('Email is required'),
-  password: passwordSchema.required('Password is required'),
+  email: emailSchema().required('Email is required'),
+  password: passwordSchema().required('Password is required'),
+});
+
+// new project schema
+export const newProjectSchema = yup.object({
+  title: titleSchema().required('Title is required'),
+  category: categorySchema().required('Category is required'),
+  description: descriptionSchema().required('Description is required'),
+  dueDate: yup.date().required('Due date is required'),
+  image: idSchema().uuid('Image must be a valid UUID').required('Image is required'),
+  createdBy: idSchema().uuid('CreatedBy must be a valid UUID').required('CreatedBy is required'),
+});
+
+// update project schema
+export const updateProjectSchema = yup.object({
+  title: titleSchema(),
+  category: categorySchema(),
+  description: descriptionSchema(),
+  dueDate: yup.date(),
+  status: yup.mixed().oneOf(['todo', 'continue', 'completed', 'overdue']),
+  assignees: yup.array().of(idSchema().uuid('Each assignee must be a valid UUID')),
+  attachments: yup.array().of(idSchema().uuid('Each attachment must be a valid UUID')),
+  image: idSchema().uuid('Image must be a valid UUID'),
 });
