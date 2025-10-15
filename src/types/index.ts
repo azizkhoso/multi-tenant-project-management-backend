@@ -62,7 +62,7 @@ export interface ITask extends IResource {
   description: string;
   dueDate: Date;
   attachments: IFile[];
-  createdBy: IUser;
+  createdBy: IUser | string;
   assignees: IMember[] | string[];
   status: 'todo' | 'continue' | 'completed' | 'overdue';
   hoursSpent: number;
@@ -80,24 +80,19 @@ export interface ITimeSheetEntry extends IResource {
 
 export interface IComment extends IResource {
   id: string;
-  createdBy: IMember | ICompanyAdmin;
+  createdBy: string | IUser;
   message: string;
   project: IProject | string;
   task: ITask | string | undefined;
 }
 
-export type Activity = ({
+export interface IActivity {
   id: string;
-  createdBy: IUser;
-  resource: ITask | IProject;
+  type: 'created' | 'updated' | 'deleted';
+  fildsUpdated?: string[];
+  previousValues?: (string | boolean | number | undefined)[];
+  createdBy: string | IUser;
+  resource: string | ITask | IProject;
   resourceType: 'task' | 'project';
   createdAt: Date;
-}) & ({
-  type: 'created'
-} | {
-  type: 'updated',
-  fieldsUpdated: string[];
-  previousValues: (string | boolean | number | undefined)[];
-} | {
-  type: 'deleted'
-})
+}

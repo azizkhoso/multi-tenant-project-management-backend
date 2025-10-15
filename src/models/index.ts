@@ -1,4 +1,4 @@
-import { sequelize } from '../config/database';
+import sequelize from '../config/database';
 import UserModel from './User';
 import CompanyModel from './Company';
 import FileModel from './File';
@@ -7,7 +7,7 @@ import TaskModel from './Task';
 import TimeSheetEntryModel from './TimeSheetEntry';
 import CommentModel from './Comment';
 import ActivityModel from './Activity';
-
+import getEnv from '../utils/getEnv';
 
 // Initialize models
 UserModel.initialize(sequelize);
@@ -19,31 +19,29 @@ TimeSheetEntryModel.initialize(sequelize);
 CommentModel.initialize(sequelize);
 ActivityModel.initialize(sequelize);
 
+// Define associations using correct foreign keys
+CompanyModel.hasMany(UserModel, { foreignKey: 'company' });
+UserModel.belongsTo(CompanyModel, { foreignKey: 'company' });
 
-// Define associations (simplified)
-CompanyModel.hasMany(UserModel, { foreignKey: 'companyId' });
-UserModel.belongsTo(CompanyModel, { foreignKey: 'companyId' });
+CompanyModel.hasMany(ProjectModel, { foreignKey: 'company' });
+ProjectModel.belongsTo(CompanyModel, { foreignKey: 'company' });
 
+ProjectModel.hasMany(TaskModel, { foreignKey: 'project' });
+TaskModel.belongsTo(ProjectModel, { foreignKey: 'project' });
 
-CompanyModel.hasMany(ProjectModel, { foreignKey: 'companyId' });
-ProjectModel.belongsTo(CompanyModel, { foreignKey: 'companyId' });
+TaskModel.hasMany(TimeSheetEntryModel, { foreignKey: 'task' });
+TimeSheetEntryModel.belongsTo(TaskModel, { foreignKey: 'task' });
 
+TaskModel.hasMany(CommentModel, { foreignKey: 'task' });
+CommentModel.belongsTo(TaskModel, { foreignKey: 'task' });
 
-ProjectModel.hasMany(TaskModel, { foreignKey: 'projectId' });
-TaskModel.belongsTo(ProjectModel, { foreignKey: 'projectId' });
+ProjectModel.hasMany(CommentModel, { foreignKey: 'project' });
+CommentModel.belongsTo(ProjectModel, { foreignKey: 'project' });
 
-
-TaskModel.hasMany(TimeSheetEntryModel, { foreignKey: 'taskId' });
-TimeSheetEntryModel.belongsTo(TaskModel, { foreignKey: 'taskId' });
-
-
-TaskModel.hasMany(CommentModel, { foreignKey: 'taskId' });
-CommentModel.belongsTo(TaskModel, { foreignKey: 'taskId' });
-
-
-ProjectModel.hasMany(CommentModel, { foreignKey: 'projectId' });
-CommentModel.belongsTo(ProjectModel, { foreignKey: 'projectId' });
-
+// sync to database
+export async function syncDb() {
+  return await sequelize.sync({ alter: getEnv('NODE_ENV') === 'development' });
+}
 
 export {
   sequelize,

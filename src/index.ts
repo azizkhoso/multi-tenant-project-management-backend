@@ -7,6 +7,7 @@ import getEnv from './utils/getEnv';
 import { logError, logInfo } from './utils/logger';
 import errorMiddleware from './middlewares/error';
 import { connectToDatabase } from './config/database';
+import { syncDb } from './models';
 
 const app = express();
 const PORT = getEnv('PORT');
@@ -18,14 +19,19 @@ app.use('/api', routes);
 // error middleware
 app.use(errorMiddleware);
 
-connectToDatabase()
-  .then(() => {
-    logInfo('Connected to the database successfully');
+async function initialize() {
+  try {
+    logInfo('Initializing application...');
+    await connectToDatabase();
+    await syncDb();
+    logInfo('Database synchronized successfully');
     app.listen(PORT, () => {
       logInfo(`Server is running on port ${PORT}`);
     });
-  })
-  .catch((err) => {
-    logError('Unable to connect to the database: ' + err.message, { error: err });
+  } catch (error) {
+    logError('Initialization failed: ' + (error as Error).message, { error });
     process.exit(1);
-  });
+  }
+}
+
+initialize();

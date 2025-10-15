@@ -1,9 +1,10 @@
 import dotenv from 'dotenv';
-import e from 'express';
+
 dotenv.config();
 
 
 type NeededEnv = {
+  NODE_ENV: string;
   PORT: number;
   DATABASE_URL: string;
   JWT_SECRET: string;
@@ -13,11 +14,13 @@ type NeededEnv = {
 
 function getEnv(key: keyof NeededEnv): NeededEnv[keyof NeededEnv] {
   const map: Record<string, string | undefined> = {
+    NODE_ENV: process.env.NODE_ENV,
     PORT: process.env.PORT,
     DATABASE_URL: process.env.DATABASE_URL,
     JWT_SECRET: process.env.JWT_SECRET,
     JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN,
     SALT_ROUNDS: process.env.SALT_ROUNDS,
+    // optional env vars can be added here
   };
 
 
