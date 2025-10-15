@@ -13,9 +13,9 @@ export async function listCompanies() {
   return companies;
 }
 
-export async function createCompany(data: Omit<ICompany, 'id' | 'isVerified' | 'createdAt' | 'updatedAt'>) {
+export async function createCompany(data: Omit<ICompany & { isVerified?: boolean }, 'id' | 'createdAt' | 'updatedAt'>) {
   // Implementation for creating a company
-  const company = await Company.create({ ...data, isVerified: false });
+  const company = await Company.create({ ...data });
   return company;
 }
 

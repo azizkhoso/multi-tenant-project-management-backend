@@ -4,6 +4,10 @@ import * as yup from 'yup';
 export const emailSchema = () => yup.string().email();
 export const passwordSchema = () => yup.string().min(8);
 
+export const fullNameSchema = () => yup.string().min(3).max(100);
+export const phoneSchema = () => yup.string().min(10).max(12);
+export const addressSchema = () => yup.string().min(10).max(200);
+
 export const titleSchema = () => yup.string().min(3).max(100);
 export const categorySchema = () => yup.string().min(3).max(50);
 export const descriptionSchema = () => yup.string().min(10).max(1000);
@@ -13,6 +17,13 @@ export const idSchema = () => yup.string().uuid();
 export const loginSchema = yup.object({
   email: emailSchema().required('Email is required'),
   password: passwordSchema().required('Password is required'),
+});
+
+// company schemas
+export const registerCompanySchema = yup.object({
+  fullName: fullNameSchema().required('Full name is required'),
+  phone: phoneSchema().required('Phone is required'),
+  address: addressSchema().required('Address is required'),
 });
 
 // new project schema
