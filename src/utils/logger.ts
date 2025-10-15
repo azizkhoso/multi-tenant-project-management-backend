@@ -25,6 +25,7 @@ export const logWarn = (message: string, ...meta: any[]) => {
 
 export const logError = (message: string, ...meta: any[]) => {
   logger.error(message, ...meta);
+  console.error(...meta);
 };
 
 export default logger;

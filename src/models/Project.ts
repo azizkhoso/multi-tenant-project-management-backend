@@ -49,13 +49,11 @@ class Project extends Model<IProject, ProjectCreation> implements IProject {
           type: DataTypes.ARRAY(DataTypes.UUID),
           allowNull: false,
           defaultValue: [],
-          references: { model: 'users', key: 'id' },
         },
         attachments: {
           type: DataTypes.ARRAY(DataTypes.UUID),
           allowNull: false,
           defaultValue: [],
-          references: { model: 'files', key: 'id' },
         },
         image: {
           type: DataTypes.UUID,

@@ -58,19 +58,11 @@ class Task extends Model<ITask, TaskCreation> implements ITask {
         createdBy: {
           type: DataTypes.UUID,
           allowNull: false,
-          references: {
-            model: 'users',
-            key: 'id',
-          },
         },
         assignees: {
           type: DataTypes.ARRAY(DataTypes.UUID),
           allowNull: false,
           defaultValue: [],
-          references: {
-            model: 'users',
-            key: 'id',
-          },
         },
         status: {
           type: DataTypes.ENUM('todo', 'continue', 'completed', 'overdue'),

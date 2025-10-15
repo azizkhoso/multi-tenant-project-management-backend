@@ -7,6 +7,11 @@ import TaskModel from './Task';
 import TimeSheetEntryModel from './TimeSheetEntry';
 import CommentModel from './Comment';
 import ActivityModel from './Activity';
+import ProjectAssigneeModel from './ProjectAssignee';
+import ProjectAttachment from './ProjectAttachment';
+import TaskAssigneeModel from './TaskAssignee';
+import TaskAttachment from './TaskAttachment';
+
 import getEnv from '../utils/getEnv';
 
 // Initialize models
@@ -18,6 +23,10 @@ TaskModel.initialize(sequelize);
 TimeSheetEntryModel.initialize(sequelize);
 CommentModel.initialize(sequelize);
 ActivityModel.initialize(sequelize);
+ProjectAssigneeModel.initialize(sequelize);
+ProjectAttachment.initialize(sequelize);
+TaskAssigneeModel.initialize(sequelize);
+TaskAttachment.initialize(sequelize);
 
 // Define associations using correct foreign keys
 CompanyModel.hasMany(UserModel, { foreignKey: 'company' });
@@ -37,6 +46,62 @@ CommentModel.belongsTo(TaskModel, { foreignKey: 'task' });
 
 ProjectModel.hasMany(CommentModel, { foreignKey: 'project' });
 CommentModel.belongsTo(ProjectModel, { foreignKey: 'project' });
+
+ProjectModel.belongsToMany(UserModel, {
+  through: ProjectAssigneeModel,
+  as: 'assignees',
+  foreignKey: 'project',
+  otherKey: 'user',
+});
+
+ProjectModel.belongsToMany(FileModel, {
+  through: ProjectAttachment,
+  as: 'attachments',
+  foreignKey: 'project',
+  otherKey: 'file',
+});
+
+TaskModel.belongsToMany(UserModel, {
+  through: TaskAssigneeModel,
+  as: 'assignees',
+  foreignKey: 'task',
+  otherKey: 'user',
+});
+
+TaskModel.belongsToMany(FileModel, {
+  through: TaskAttachment,
+  as: 'attachments',
+  foreignKey: 'task',
+  otherKey: 'file',
+});
+
+UserModel.belongsToMany(ProjectModel, {
+  through: ProjectAssigneeModel,
+  as: 'projects',
+  foreignKey: 'user',
+  otherKey: 'project',
+});
+
+UserModel.belongsToMany(TaskModel, {
+  through: TaskAssigneeModel,
+  as: 'tasks',
+  foreignKey: 'user',
+  otherKey: 'task',
+});
+
+FileModel.belongsToMany(ProjectModel, {
+  through: ProjectAttachment,
+  as: 'projects',
+  foreignKey: 'file',
+  otherKey: 'project',
+});
+
+FileModel.belongsToMany(TaskModel, {
+  through: TaskAttachment,
+  as: 'tasks',
+  foreignKey: 'file',
+  otherKey: 'task',
+});
 
 // sync to database
 export async function syncDb() {
