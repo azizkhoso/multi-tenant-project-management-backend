@@ -44,14 +44,13 @@ export type ProjectStatus = 'todo' | 'continue' | 'completed' | 'overdue';
 
 export interface IProject extends IResource {
   id: string;
+  company: ICompany | string;
   title: string;
   category: string;
   description: string;
   dueDate: Date;
   image: IFile;
-  attachments: IFile[];
   createdBy: ICompanyAdmin | string;
-  assignees: IMember[] | string[];
   status: ProjectStatus;
 }
 
@@ -61,9 +60,7 @@ export interface ITask extends IResource {
   title: string;
   description: string;
   dueDate: Date;
-  attachments: IFile[];
   createdBy: IUser | string;
-  assignees: IMember[] | string[];
   status: 'todo' | 'continue' | 'completed' | 'overdue';
   hoursSpent: number;
   tags: string[];

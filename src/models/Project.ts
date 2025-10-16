@@ -1,21 +1,36 @@
-import { DataTypes, Model, Sequelize, Optional } from 'sequelize';
-import { IProject } from '../types';
+import { DataTypes, Model, Sequelize, Optional, BelongsToManyGetAssociationsMixin, BelongsToManyAddAssociationMixin, BelongsToManySetAssociationsMixin, BelongsToManyRemoveAssociationMixin, Association } from 'sequelize';
+import { ICompany, IFile, IMember, IProject } from '../types';
+import { FileModel, UserModel } from '.';
 
-type ProjectCreation = Pick<IProject, 'image' | 'createdBy' | 'title' | 'description' | 'category' | 'dueDate'>;
+type ProjectCreation = Pick<IProject, 'company' | 'image' | 'createdBy' | 'title' | 'description' | 'category' | 'dueDate'>;
 
 class Project extends Model<IProject, ProjectCreation> implements IProject {
   public id!: string;
+  public company!: string | ICompany;
   public title!: string;
   public category!: string;
   public description!: string;
   public dueDate!: Date;
   public image!: any; // Should be associated with IFile model
-  public attachments!: any[]; // Should be associated with IFile model
   public createdBy!: any; // Should be associated with ICompanyAdmin or string
-  public assignees!: any[]; // Should be associated with IMember[] or string[]
   public status!: 'todo' | 'continue' | 'completed' | 'overdue';
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  
+  public attachments?: IFile[]; // Should be associated with IFile model
+  public assignees?: IMember[]; // Should be associated with IMember[] or string[]
+  // ✅ Mixin methods from Sequelize
+  public getAssignees!: BelongsToManyGetAssociationsMixin<UserModel>;
+  public addAssignee!: BelongsToManyAddAssociationMixin<UserModel, string>;
+  public addAssignees!: BelongsToManyAddAssociationMixin<UserModel[], string[]>;
+  public setAssignees!: BelongsToManySetAssociationsMixin<UserModel, string>;
+  public removeAssignee!: BelongsToManyRemoveAssociationMixin<UserModel, string>;
+
+  // Optional: association metadata for TypeScript
+  public static associations: {
+    assignees: Association<Project, UserModel>;
+    attachments: Association<Project, FileModel>;
+  };
 
   static initialize(sequelize: Sequelize) {
     Project.init(
@@ -24,6 +39,11 @@ class Project extends Model<IProject, ProjectCreation> implements IProject {
           type: DataTypes.UUID,
           defaultValue: DataTypes.UUIDV4,
           primaryKey: true,
+        },
+        company: {
+          type: DataTypes.UUID,
+          allowNull: false,
+          references: { model: 'companies', key: 'id' },
         },
         title: {
           type: DataTypes.STRING,
@@ -44,16 +64,6 @@ class Project extends Model<IProject, ProjectCreation> implements IProject {
         status: {
           type: DataTypes.ENUM('todo', 'continue', 'completed', 'overdue'),
           allowNull: false,
-        },
-        assignees: {
-          type: DataTypes.ARRAY(DataTypes.UUID),
-          allowNull: false,
-          defaultValue: [],
-        },
-        attachments: {
-          type: DataTypes.ARRAY(DataTypes.UUID),
-          allowNull: false,
-          defaultValue: [],
         },
         image: {
           type: DataTypes.UUID,
