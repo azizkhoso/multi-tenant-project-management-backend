@@ -5,7 +5,7 @@ import { CompanyModel } from "../models";
 
 export async function getCompanyById(id: string) {
   const company = await CompanyModel.findByPk(id);
-  return company;
+  return company?.toJSON();
 }
 
 export async function listCompanies() {

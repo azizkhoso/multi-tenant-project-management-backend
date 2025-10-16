@@ -12,8 +12,6 @@ import ProjectAttachment from './ProjectAttachment';
 import TaskAssigneeModel from './TaskAssignee';
 import TaskAttachment from './TaskAttachment';
 
-import getEnv from '../utils/getEnv';
-
 // Initialize models
 UserModel.initialize(sequelize);
 CompanyModel.initialize(sequelize);
@@ -105,7 +103,7 @@ FileModel.belongsToMany(TaskModel, {
 
 // sync to database
 export async function syncDb() {
-  return await sequelize.sync({ alter: getEnv('NODE_ENV') === 'development' });
+  return await sequelize.sync({ alter: true });
 }
 
 export {

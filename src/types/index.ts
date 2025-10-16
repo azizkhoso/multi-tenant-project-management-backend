@@ -13,6 +13,7 @@ export interface IUser extends IResource {
   password: string;
   avatar?: IFile;
   fullName: string;
+  company: string | ICompany;
 }
 
 export interface ICompany {

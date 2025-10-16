@@ -19,9 +19,18 @@ export const loginSchema = yup.object({
   password: passwordSchema().required('Password is required'),
 });
 
+// user schemas
+export const createUserSchema = yup.object({
+  email: emailSchema().required('Email is required'),
+  password: passwordSchema().required('Password is required'),
+  fullName: fullNameSchema().required('Full name is required'),
+  company: idSchema().uuid('Company must be a valid UUID').required('Company is required'),
+});
+
 // company schemas
 export const registerCompanySchema = yup.object({
   fullName: fullNameSchema().required('Full name is required'),
+  email: emailSchema().required('Email is required'),
   phone: phoneSchema().required('Phone is required'),
   address: addressSchema().required('Address is required'),
 });

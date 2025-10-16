@@ -1,10 +1,11 @@
 import { DataTypes, Model, Sequelize, Optional } from 'sequelize';
-import { IFile, IUser } from '../types';
+import { ICompany, IFile, IUser } from '../types';
 
 type UserCreation = Optional<IUser, 'id' | 'createdAt' | 'updatedAt'>;
 
 class User extends Model<IUser, UserCreation> implements IUser {
   public id!: string;
+  public company!: string | ICompany;
   public role!: 'company_admin' | 'member';
   public email!: string;
   public password!: string;
@@ -20,6 +21,14 @@ class User extends Model<IUser, UserCreation> implements IUser {
           type: DataTypes.UUID,
           defaultValue: DataTypes.UUIDV4,
           primaryKey: true,
+        },
+        company: {
+          type: DataTypes.UUID,
+          allowNull: false,
+          references: {
+            model: 'companies',
+            key: 'id',
+          },
         },
         role: {
           type: DataTypes.ENUM('company_admin', 'member'),
