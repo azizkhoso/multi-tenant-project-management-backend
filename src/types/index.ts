@@ -18,6 +18,7 @@ export interface IUser extends IResource {
 export interface ICompany {
   id: string;
   fullName: string;
+  email: string;
   phone: string;
   address: string;
   isVerified: boolean; // should become true when super admin verifies the company

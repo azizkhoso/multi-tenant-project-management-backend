@@ -15,8 +15,13 @@ export async function listCompanies() {
 
 export async function createCompany(data: Omit<ICompany & { isVerified?: boolean }, 'id' | 'createdAt' | 'updatedAt'>) {
   // Implementation for creating a company
-  const company = await CompanyModel.create({ ...data });
-  return company;
+  try {
+    const company = await CompanyModel.create({ ...data });
+    return company.toJSON();
+  } catch (error) {
+    console.error("Error creating company:", error);
+    throw error;
+  }
 }
 
 export async function updateCompany(id: string, data: Partial<Omit<ICompany, 'id' | 'createdAt' | 'updatedAt'>>) {
