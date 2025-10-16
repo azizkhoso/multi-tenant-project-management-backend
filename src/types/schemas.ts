@@ -27,6 +27,12 @@ export const createUserSchema = yup.object({
   company: idSchema().uuid('Company must be a valid UUID').required('Company is required'),
 });
 
+export const createUserWithoutCompanySchema = yup.object({
+  email: emailSchema().required('Email is required'),
+  password: passwordSchema().required('Password is required'),
+  fullName: fullNameSchema().required('Full name is required'),
+});
+
 // company schemas
 export const registerCompanySchema = yup.object({
   fullName: fullNameSchema().required('Full name is required'),

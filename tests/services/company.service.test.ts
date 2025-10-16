@@ -18,7 +18,13 @@ describe('Company Service', () => {
       isVerified: true,
     };
 
-    const createdCompany = await createCompany(companyData);
+    const adminData = {
+      fullName: 'Admin',
+      email: 'admin@company.com',
+      password: 'securepassword',
+    };
+
+    const createdCompany = await createCompany(companyData, adminData);
     console.log('Created Company:', createdCompany);
     expect(createdCompany).toMatchObject(companyData);
 

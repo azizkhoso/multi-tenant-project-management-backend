@@ -24,6 +24,7 @@ class Company extends Model<ICompany, CompanyCreation> implements ICompany {
         email: {
           type: DataTypes.STRING,
           allowNull: false,
+          unique: true,
         },
         fullName: {
           type: DataTypes.STRING,
