@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 
-import { createUserWithoutCompanySchema, registerCompanySchema } from '../types/schemas';
-import { createCompany, getCompanyById } from '../services/company.service';
+import { createUserWithoutCompanySchema, registerCompanySchema, updateCompanySchema } from '../types/schemas';
+import { createCompany, getCompanyById, updateCompany } from '../services/company.service';
 import Exception from '../utils/Exception';
 
 export async function registerCompany(req: Request, res: Response) {
@@ -12,9 +12,26 @@ export async function registerCompany(req: Request, res: Response) {
   res.status(201).json({ company: created, admin: adminData });
 };
 
-export async function getCompany(req: Request, res: Response) {
+export async function getCompanyByIdController(req: Request, res: Response) {
   const { id } = req.params;
   const company = await getCompanyById(id);
   if (!company) throw new Exception({ code: 'NOT_FOUND', data: { resource: 'company' } });
   res.json({ company });
+}
+
+export async function getCompanyDashboardController(req: Request, res: Response) {
+  const { id } = req.params;
+  const company = await getCompanyById(id);
+  if (!company) throw new Exception({ code: 'NOT_FOUND', data: { resource: 'company' } });
+  res.json({ company });
+}
+
+export async function updateCompanyController(req: Request, res: Response) {
+  const { id } = req.params;
+  const company = await getCompanyById(id);
+  if (!company) throw new Exception({ code: 'NOT_FOUND', data: { resource: 'company' } });
+  if (req.user?.company !== company.id) throw new Exception({ code: 'UNAUTHORIZED' });
+  const updateData = updateCompanySchema.validateSync(req.body);
+  const updated = await updateCompany(company.id, updateData);
+  res.json({ company: updated });
 }

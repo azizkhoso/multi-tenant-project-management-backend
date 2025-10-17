@@ -9,6 +9,7 @@ declare module 'express-serve-static-core' {
       id: string;
       isEmailNotVerified?: boolean;
       role: 'member' | 'company_admin' | 'superadmin';
+      company?: string; // id of company
     }
   }
 }

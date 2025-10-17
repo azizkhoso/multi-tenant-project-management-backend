@@ -29,10 +29,10 @@ interface EmailVerificationData extends ITokenData {
 interface LoginData extends ITokenData {
   type: 'login';
   data: {
-    authId: string; // auth account id
-    id: string; // seller or buyer id
+    id: string;
     role: 'member' | 'company_admin' | 'superadmin'
-    isEmailVerified: boolean
+    isEmailVerified: boolean;
+    company?: string; // id of company
   }
 }
 interface ResetPasswordData extends ITokenData {

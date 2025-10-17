@@ -1,11 +1,10 @@
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import User from '../models/User';
-import getEnv from '../utils/getEnv';
-import Exception from '../utils/Exception';
-import { IUser } from '../types';
 
-const JWT_SECRET = getEnv('JWT_SECRET') as string;
+import User from '../models/User';
+import Exception from '../utils/Exception';
+import { generateToken } from '../utils/tokenHelpers';
+
+/* const JWT_SECRET = getEnv('JWT_SECRET') as string;
 const JWT_EXPIRES_IN = getEnv('JWT_EXPIRES_IN') as number;
 const SALT_ROUNDS = 8;
 
@@ -16,7 +15,7 @@ export async function register(data: { email: string; password: string; fullName
   const hashed = await bcrypt.hash(data.password, SALT_ROUNDS);
   const user = await User.create({ email: data.email, password: hashed, fullName: data.fullName, role: data.role ?? 'member' });
   return user;
-}
+} */
 
 export async function login(email: string, password: string) {
   const user = await User.findOne({ where: { email } });
@@ -24,6 +23,6 @@ export async function login(email: string, password: string) {
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) throw new Exception({ code: 'INCORRECT_PASSWORD' });
 
-  const token = jwt.sign({ sub: user.id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+  const token = generateToken({ type: 'login', data: { ...user, company: user.company as string, isEmailVerified: true } }); // TODO: handle in production
   return { token, user };
 }

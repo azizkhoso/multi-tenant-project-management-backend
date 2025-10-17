@@ -38,7 +38,7 @@ export async function updateCompany(id: string, data: Partial<Omit<ICompany, 'id
   const company = await CompanyModel.findByPk(id);
   if (!company) return null;
   const updated = await company.update(data);
-  return updated;
+  return updated.toJSON();
 }
 
 export async function deleteCompany(id: string) {

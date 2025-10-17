@@ -7,7 +7,7 @@ const isStringAndNotEmpty = (value: any): value is string => (
   typeof value === 'string' && value.length === 0
 );
 
-const authMiddleware = (role: string) => (
+const authMiddleware = (...roles: string[]) => (
   req: Request,
   res: Response,
   next: NextFunction
@@ -22,7 +22,8 @@ const authMiddleware = (role: string) => (
       tokenData = parseToken(header.split(' ')[1]);
     } else throw new Exception({ code: 'UNAUTHORIZED' });
     if (tokenData.type !== 'login') throw new Exception({ code: 'UNAUTHORIZED' });
-    if (role !== '' && tokenData.data.role !== role) throw new Exception({ code: 'UNAUTHORIZED' });
+    // in case no role is provided
+    if (roles.length === 0 && !roles.includes(tokenData.data.role)) throw new Exception({ code: 'UNAUTHORIZED' });
     req.user = tokenData.data;
     next();
   } catch (e: any) {

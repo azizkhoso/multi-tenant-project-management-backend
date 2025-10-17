@@ -41,6 +41,13 @@ export const registerCompanySchema = yup.object({
   address: addressSchema().required('Address is required'),
 });
 
+export const updateCompanySchema = yup.object({
+  fullName: fullNameSchema().optional(),
+  email: emailSchema().optional(),
+  phone: phoneSchema().optional(),
+  address: addressSchema().optional(),
+});
+
 // new project schema
 export const newProjectSchema = yup.object({
   title: titleSchema().required('Title is required'),
