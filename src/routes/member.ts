@@ -8,6 +8,8 @@ const router = express.Router();
 
 router.post('/', authMiddleware('company_admin'), controllers.newMember);
 
+router.get('/', authMiddleware('company_admin'), controllers.getMembers);
+
 router.get('/:id', authMiddleware('company_admin', 'member'), controllers.getMemberById);
 
 router.get('/:id/dashboard', authMiddleware('company_admin'), getCompanyDashboardController);

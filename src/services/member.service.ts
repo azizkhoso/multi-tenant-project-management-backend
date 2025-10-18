@@ -19,3 +19,27 @@ export async function getMemberById(id: string) {
   const user = await UserModel.findOne({ where: { role: 'member', id: id }, include: ['avatar'] });
   return user?.toJSON();
 }
+
+export async function getMembersByCompany(
+  company: string,
+  filters?: { fullName?: string; sort?: { sortBy: string; order: 'ASC' | 'DESC' } }
+) {
+  const where: Record<string, any> = { company, role: 'member' };
+
+  if (filters?.fullName) {
+    where.fullName = filters.fullName;
+  }
+
+  const order: Array<[string, 'ASC' | 'DESC']> = [];
+
+  if (filters?.sort?.sortBy && filters?.sort?.order) {
+    order.push([filters.sort.sortBy, filters.sort.order]);
+  }
+
+  const users = await UserModel.findAll({
+    where,
+    order,
+  });
+
+  return users;
+}
