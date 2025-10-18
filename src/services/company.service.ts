@@ -34,6 +34,7 @@ export async function createCompany(
   try {
     // create admin
     await createCompanyAdmin({ ...adminData, company: company.id }, transaction);
+    transaction?.commit();
     return company.toJSON();
   } catch (error) {
     if ((error as any).name === 'SequelizeUniqueConstraintError') {
