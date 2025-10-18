@@ -60,7 +60,10 @@ interface IncorrectPassword extends ConstructorArgs {
   code: 'INCORRECT_PASSWORD'
 }
 interface Unauthorized extends ConstructorArgs {
-  code: 'UNAUTHORIZED'
+  code: 'UNAUTHORIZED',
+  data?: {
+    requiredRole: string;
+  }
 }
 interface IncorrectOldPassword extends ConstructorArgs {
   code: 'INCORRECT_OLD_PASSWORD'
@@ -209,8 +212,8 @@ const map: ExceptionMap = {
     message: 'Password is not correct',
     status: 401
   }),
-  UNAUTHORIZED: () => ({
-    message: 'Log in to continue',
+  UNAUTHORIZED: (data: Unauthorized['data']) => ({
+    message: data?.requiredRole ? `Login as ${data.requiredRole} to continue` : 'Log in to continue',
     status: 401
   }),
   EMAIL_NOT_VERIFIED: () => ({

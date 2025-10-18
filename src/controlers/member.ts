@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 
-import { createUserSchema } from "../types/schemas";
+import { createUserWithoutCompanySchema } from "../types/schemas";
 import { createMember, getMemberById as getById } from "../services/member.service";
 import Exception from "../utils/Exception";
 
 export async function newMember(req: Request, res: Response) {
-  const data = createUserSchema.validateSync(req.body);
-  const user = await createMember(data);
+  const data = createUserWithoutCompanySchema.validateSync(req.body);
+  const user = await createMember({ ...data, company: req.user!.company! });
   res.json({ member: user });
 }
 
