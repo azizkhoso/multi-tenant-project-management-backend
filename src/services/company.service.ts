@@ -1,8 +1,8 @@
 import { ICompany, IUser } from "../types";
 import { CompanyModel } from "../models";
 import { createCompanyAdmin } from "./company-admin.service";
-import { Sequelize } from "sequelize";
 import Exception from "../utils/Exception";
+import Company from "../models/Company";
 
 // CRUD operations for Company
 
@@ -20,15 +20,24 @@ export async function createCompany(
   data: Omit<ICompany & { isVerified?: boolean }, 'id' | 'createdAt' | 'updatedAt'>,
   adminData: Omit<IUser, 'id' | 'company' | 'createdAt' | 'updatedAt' | 'role'>,
 ) {
-  // Implementation for creating a company
+  const transaction = await CompanyModel.sequelize?.transaction();
+  let company: Company;
   try {
-    const company = await CompanyModel.create({ ...data });
-    // create admin
-    await createCompanyAdmin({ ...adminData, company: company.id });
-    return company.toJSON();
+    // create sequelize transaction
+    company = await CompanyModel.create({ ...data }, { transaction});
   } catch (error) {
     if ((error as any).name === 'SequelizeUniqueConstraintError') {
       throw new Exception({ code: 'DUPLICATE_RESOURCE', data: { resource: 'Company' } });
+    }
+    else throw error;
+  }
+  try {
+    // create admin
+    await createCompanyAdmin({ ...adminData, company: company.id }, transaction);
+    return company.toJSON();
+  } catch (error) {
+    if ((error as any).name === 'SequelizeUniqueConstraintError') {
+      throw new Exception({ code: 'DUPLICATE_RESOURCE', data: { resource: 'Admin' } });
     }
     else throw error;
   }
