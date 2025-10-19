@@ -5,6 +5,7 @@ import companyRoutes from './company';
 import memberRoutes from './member';
 import projectRoutes from './project';
 import fileRoutes from './file';
+import taskRoutes from './task';
 
 const router = express.Router();
 
@@ -17,6 +18,8 @@ router.use('/companies', companyRoutes);
 router.use('/members', memberRoutes);
 
 router.use('/projects', projectRoutes);
+
+router.use('/tasks', taskRoutes);
 
 router.use('/files', fileRoutes);
 

@@ -70,3 +70,14 @@ export const updateProjectSchema = yup.object({
   attachments: yup.array().of(idSchema().uuid('Each attachment must be a valid UUID')),
   image: idSchema().uuid('Image must be a valid UUID'),
 });
+
+
+// new project schema
+export const newTaskSchema = yup.object({
+  project: idSchema().required('Project is required'),
+  title: titleSchema().required('Title is required'),
+  description: descriptionSchema().required('Description is required'),
+  dueDate: yup.date().required('Due date is required'),
+  assignees: yup.array().of(idSchema()).optional().default([]),
+  tags: yup.array().of(yup.string()).optional().default([]),
+});
