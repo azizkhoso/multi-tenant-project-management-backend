@@ -22,11 +22,11 @@ export async function getTaskById(id: string) {
   return prj.toJSON();
 }
 
-export async function getTasksByCompany(
-  company: string,
+export async function getTasksByProject(
+  project: string,
   filters?: { title?: string; sort?: { sortBy: string; order: 'ASC' | 'DESC' } }
 ) {
-  const where: Record<string, any> = { company };
+  const where: Record<string, any> = { project };
 
   if (filters?.title) {
     where.title = filters.title;

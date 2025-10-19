@@ -8,6 +8,6 @@ const router = express.Router();
 
 router.post('/', authMiddleware('company_admin'), fileUploadMiddleware.single('image'),  controllers.newTask);
 
-router.get('/', authMiddleware('company_admin', 'member'), controllers.getTasks);
+router.get('/by-project/:projectId', authMiddleware('company_admin', 'member'), controllers.getTasks);
 
 export default router;
