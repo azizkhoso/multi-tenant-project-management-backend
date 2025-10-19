@@ -18,7 +18,8 @@ export async function newProject(req: Request, res: Response) {
     image: fileRec.id,
     company: req.user!.company!,
     createdBy: req.user?.id!,
-  })
+    assignees: (data.assignees as string[]) || [],
+  });
   res.json({ project: prj });
 }
 

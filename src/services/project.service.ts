@@ -3,10 +3,16 @@ import Project from '../models/Project';
 import User from '../models/User';
 import { IProject } from '../types';
 import Exception from '../utils/Exception';
-import { ProjectModel } from '../models';
+import { ProjectModel, sequelize } from '../models';
 
-export async function createProject(data: Pick<IProject, 'image' | 'company' | 'createdBy' | 'title' | 'description' | 'category' | 'dueDate'>) {
-  const created = await Project.create({ ...data, status: 'todo' });
+export async function createProject(data: Pick<IProject & { assignees?: string[] }, 'image' | 'company' | 'createdBy' | 'title' | 'description' | 'category' | 'dueDate' | 'assignees'>) {
+  const transaction = await Project.sequelize?.transaction();
+  const created = await Project.create({ ...data, status: 'todo' }, { transaction });
+  // add assignees
+  if (data.assignees && data.assignees.length > 0) {
+    await created.addAssignees(data.assignees, { transaction });
+  }
+  await transaction?.commit();
   return created.toJSON();
 }
 
@@ -35,6 +41,7 @@ export async function getProjectsByCompany(
   const projects = await ProjectModel.findAll({
     where,
     order,
+    include: ['assignees']
   });
 
   return projects;
@@ -84,19 +91,11 @@ export async function deleteProject(id: string) {
 }
 
 export async function addAssignee(projectId: string, userId: string) {
-  const project = await Project.findByPk(projectId);
-  const user = await User.findByPk(userId);
-  if (!project) throw new Exception({ code: 'NOT_FOUND', data: { resource: 'Project' } });
-  if (!user) throw new Exception({ code: 'NOT_FOUND', data: { resource: 'User' } });
-  project.assignees = [...project.assignees, userId];
-  return await project.save();
+  
 }
 
 export async function removeAssignee(projectId: string, userId: string) {
-  const project = await Project.findByPk(projectId);
-  if (!project) throw new Exception({ code: 'NOT_FOUND', data: { resource: 'Project' } });
-  project.assignees = project.assignees.filter((id: string) => id !== userId);
-  return await project.save();
+  
 }
 
 export async function getProjectsByAssignee(userId: string) {
