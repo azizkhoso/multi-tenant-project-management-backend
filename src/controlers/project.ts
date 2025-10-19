@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import * as yup from 'yup';
 
-import { createUserWithoutCompanySchema, newProjectSchema } from "../types/schemas";
-import { createMember, getMemberById as getById, getMembersByCompany } from "../services/member.service";
-import Exception from "../utils/Exception";
+import { newProjectSchema } from "../types/schemas";
+import { getProjectById as getById, getProjectsByCompany, getProjectsByMember } from "../services/project.service";
 import { saveFile } from "../services/file.service";
 import { createProject } from "../services/project.service";
+import { IProject } from "../types";
 
 export async function newProject(req: Request, res: Response) {
   const data = newProjectSchema.concat(yup.object({
@@ -22,19 +22,29 @@ export async function newProject(req: Request, res: Response) {
   res.json({ project: prj });
 }
 
-export async function getMemberById(req: Request, res: Response) {
+export async function getProjectById(req: Request, res: Response) {
   const { id } = req.params;
-  const user = await getById(id);
-  if (!user) throw new Exception({ code: 'NOT_FOUND', data: { resource: 'Member' } });
-  res.json({ member: user });
+  const project = await getById(id);
+  res.json({ project: project });
 }
 
-export async function getMembers(req: Request, res: Response) {
-  const members = await getMembersByCompany(req.user?.company!, {
-    sort: {
-      sortBy: req.query.sortBy as string,
-      order: req.query.order ? (req.query.order as string).toUpperCase() as 'ASC' | 'DESC' : 'ASC',
-    }
-  });
-  res.json({ members });
+export async function getProjects(req: Request, res: Response) {
+  // if company admin is rquesting show all, else only show members projects
+  let projects: IProject[] = [];
+  if (req.user!.role === 'company_admin') {
+    projects = await getProjectsByCompany(req.user?.company!, {
+      sort: {
+        sortBy: req.query.sortBy as string,
+        order: req.query.order ? (req.query.order as string).toUpperCase() as 'ASC' | 'DESC' : 'ASC',
+      }
+    });
+  } else {
+    projects = await getProjectsByMember(req.user?.company!, req.user!.id, {
+      sort: {
+        sortBy: req.query.sortBy as string,
+        order: req.query.order ? (req.query.order as string).toUpperCase() as 'ASC' | 'DESC' : 'ASC',
+      }
+    });
+  }
+  res.json({ projects });
 }
