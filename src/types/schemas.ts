@@ -81,3 +81,12 @@ export const newTaskSchema = yup.object({
   assignees: yup.array().of(idSchema()).optional().default([]),
   tags: yup.array().of(yup.string()).optional().default([]),
 });
+
+export const updateTaskSchema = yup.object({
+  title: titleSchema(),
+  description: descriptionSchema(),
+  dueDate: yup.date(),
+  status: yup.string().oneOf(['todo', 'continue', 'completed', 'overdue']),
+  assignees: yup.array().of(idSchema()).optional().default([]),
+  tags: yup.array().of(yup.string()).optional().default([]),
+});

@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
-import * as yup from 'yup';
 
-import { newTaskSchema } from "../types/schemas";
-import { getTaskById as getById, getTasksByMember, getTasksByProject } from "../services/task.service";
-import { saveFile } from "../services/file.service";
+import { newTaskSchema, updateTaskSchema } from "../types/schemas";
+import { getTaskById as getById, getTasksByMember, getTasksByProject, updateTask as update } from "../services/task.service";
 import { createTask } from "../services/task.service";
 import { ITask } from "../types";
 
@@ -16,6 +14,18 @@ export async function newTask(req: Request, res: Response) {
     tags: data.tags as string[],
   });
   res.json({ task: prj });
+}
+
+export async function updateTask(req: Request, res: Response) {
+  const data = updateTaskSchema.validateSync(req.body, { stripUnknown: true });
+  console.log({ data });
+  const updated = await update(req.params.id as string, {
+    ...data,
+    assignees: data.assignees as string[],
+    tags: data.tags as string[],
+    status: data.status as ITask['status'],
+  });
+  return res.json({ task: updated });
 }
 
 export async function getTaskById(req: Request, res: Response) {

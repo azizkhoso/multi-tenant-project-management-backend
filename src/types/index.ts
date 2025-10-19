@@ -67,6 +67,7 @@ export interface ITask extends IResource {
   status: 'todo' | 'continue' | 'completed' | 'overdue';
   hoursSpent: number;
   tags: string[];
+  assignees?: string[] | IMember[];
 }
 
 export interface ITimeSheetEntry extends IResource {

@@ -79,8 +79,8 @@ export async function getTasksByMember(
 export async function updateTask(id: string, data: Partial<ITask>) {
   const task = await Task.findByPk(id);
   if (!task) throw new Exception({ code: 'NOT_FOUND', data: { resource: 'Task' } });
-  await task.update(data);
-  return task;
+  await task.set({ ...data }).save();
+  return task.toJSON();
 }
 
 export async function deleteTask(id: string) {
