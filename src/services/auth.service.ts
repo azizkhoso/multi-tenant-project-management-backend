@@ -23,6 +23,6 @@ export async function login(email: string, password: string) {
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) throw new Exception({ code: 'INCORRECT_PASSWORD' });
 
-  const token = generateToken({ type: 'login', data: { ...user, company: user.company as string, isEmailVerified: true } }); // TODO: handle in production
-  return { token, user };
+  const token = generateToken({ type: 'login', data: { ...user.toJSON(), company: user.company as string, isEmailVerified: true } }); // TODO: handle in production
+  return { token, user: user.toJSON() };
 }

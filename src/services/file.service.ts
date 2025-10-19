@@ -2,19 +2,29 @@ import fs from "fs";
 import path from "path";
 import FileModel from "../models/File";
 
-export async function saveFile(file: { name: string; url: string; size: number }, fileBuffer: Buffer) {
+export async function saveFile(fileName: string, fileBuffer: Buffer) {
   // save buffer to local storage in `files` folder
   // ensure the `files` folder exists
   const filesDir = path.join(__dirname, "../../files");
   if (!fs.existsSync(filesDir)) {
     fs.mkdirSync(filesDir);
   }
-  const savedData = await FileModel.create(file);
+  const savedData = await FileModel.create({
+    name: 'dummy' + Date.now(), // update later
+    size: fileBuffer.length,
+    url: 'dummy' + Date.now(), // update later
+  });
   // construct file path
-  const pathname = path.join(filesDir, savedData.id + path.extname(file.name));
+  const nm = savedData.id + path.extname(fileName);
+  const pathname = path.join(filesDir, nm);
+  // update name in db
+  await savedData.update({
+    name: nm,
+    url: `/files/${nm}`,
+  })
   // write file to disk
   fs.writeFileSync(pathname, fileBuffer);
-  return savedData;
+  return savedData.toJSON();
 }
 
 export async function getFileById(id: string) {

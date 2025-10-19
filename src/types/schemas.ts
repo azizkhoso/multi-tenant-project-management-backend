@@ -54,8 +54,9 @@ export const newProjectSchema = yup.object({
   category: categorySchema().required('Category is required'),
   description: descriptionSchema().required('Description is required'),
   dueDate: yup.date().required('Due date is required'),
-  image: idSchema().uuid('Image must be a valid UUID').required('Image is required'),
-  createdBy: idSchema().uuid('CreatedBy must be a valid UUID').required('CreatedBy is required'),
+  assignees: yup.array().of(idSchema()).optional(),
+  // image: idSchema().uuid('Image must be a valid UUID').required('Image is required'),
+  // createdBy: idSchema().uuid('CreatedBy must be a valid UUID').required('CreatedBy is required'),
 });
 
 // update project schema

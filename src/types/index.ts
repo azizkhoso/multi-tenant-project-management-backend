@@ -51,7 +51,7 @@ export interface IProject extends IResource {
   category: string;
   description: string;
   dueDate: Date;
-  image: IFile;
+  image: IFile | string;
   createdBy: ICompanyAdmin | string;
   status: ProjectStatus;
 }

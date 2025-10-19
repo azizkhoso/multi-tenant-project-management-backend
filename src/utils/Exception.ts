@@ -1,3 +1,4 @@
+import { MulterError } from 'multer';
 import { ValidationError } from 'yup';
 
 const isNullOrUndefined = (val: any): val is null | undefined => (
@@ -261,6 +262,13 @@ export const parseError = (e: any): {
       errorData: e,
       errorMessage: e.message,
       status: map.VALIDATION_FAILED(e).status
+    });
+  } else if (e instanceof MulterError) {
+    return ({
+      errorCode: e.code,
+      errorData: e,
+      errorMessage: e.message,
+      status: 400,
     });
   } else {
     console.log(typeof e === 'object' ? JSON.stringify(e) : e, e.stack);

@@ -11,6 +11,7 @@ import ProjectAssigneeModel from './ProjectAssignee';
 import ProjectAttachment from './ProjectAttachment';
 import TaskAssigneeModel from './TaskAssignee';
 import TaskAttachment from './TaskAttachment';
+import { Model } from 'sequelize';
 
 // Initialize models
 UserModel.initialize(sequelize);
@@ -32,6 +33,11 @@ UserModel.belongsTo(CompanyModel, { foreignKey: 'company' });
 
 CompanyModel.hasMany(ProjectModel, { foreignKey: 'company' });
 ProjectModel.belongsTo(CompanyModel, { foreignKey: 'company' });
+
+ProjectModel.belongsTo(FileModel, {
+  foreignKey: 'image',
+  as: '_image', // this alias is required to use `include: ['image']`
+});
 
 ProjectModel.hasMany(TaskModel, { foreignKey: 'project' });
 TaskModel.belongsTo(ProjectModel, { foreignKey: 'project' });
@@ -106,8 +112,32 @@ export async function syncDb() {
   return await sequelize.sync({ alter: true });
 }
 
+/**
+ * Recursively converts Sequelize instances (and arrays) into plain JS objects.
+ * Uses `.toJSON()` internally, preserving nested models (associations).
+ */
+function lean<K extends Record<string, any>, T extends (Model)>(data: T): K {
+  if (!data) return data;
+
+  let plain: K = data.toJSON();
+
+  // Recursively convert any nested objects (associations) to plain as well
+  for (const key in plain) {
+    const value = plain[key];
+
+    // Handle nested models or arrays of models
+    if (value && typeof value === 'object') {
+      plain[key] = lean(value);
+    }
+  }
+
+  return plain;
+}
+
+
 export {
   sequelize,
+  lean,
   UserModel,
   CompanyModel,
   FileModel,

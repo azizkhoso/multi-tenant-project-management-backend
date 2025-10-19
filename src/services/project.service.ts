@@ -3,13 +3,10 @@ import Project from '../models/Project';
 import User from '../models/User';
 import { IProject } from '../types';
 import Exception from '../utils/Exception';
-import { newProjectSchema } from '../types/schemas';
 
-
-export async function createProject(data: Pick<IProject, 'id' | 'image' | 'createdBy' | 'title' | 'description' | 'category' | 'dueDate'>) {
-  // validate the data
-  const validated = await newProjectSchema.validate(data, { abortEarly: true, stripUnknown: true });
-  return await Project.create(validated);
+export async function createProject(data: Pick<IProject, 'image' | 'company' | 'createdBy' | 'title' | 'description' | 'category' | 'dueDate'>) {
+  const created = await Project.create({ ...data, status: 'todo' });
+  return created.toJSON();
 }
 
 export async function getProjectById(id: string) {

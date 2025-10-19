@@ -2,7 +2,7 @@ import { DataTypes, Model, Sequelize, Optional, BelongsToManyGetAssociationsMixi
 import { ICompany, IFile, IMember, IProject } from '../types';
 import { FileModel, UserModel } from '.';
 
-type ProjectCreation = Pick<IProject, 'company' | 'image' | 'createdBy' | 'title' | 'description' | 'category' | 'dueDate'>;
+type ProjectCreation = Pick<IProject, 'company' | 'status' | 'image' | 'createdBy' | 'title' | 'description' | 'category' | 'dueDate'>;
 
 class Project extends Model<IProject, ProjectCreation> implements IProject {
   public id!: string;
@@ -11,12 +11,12 @@ class Project extends Model<IProject, ProjectCreation> implements IProject {
   public category!: string;
   public description!: string;
   public dueDate!: Date;
-  public image!: any; // Should be associated with IFile model
   public createdBy!: any; // Should be associated with ICompanyAdmin or string
   public status!: 'todo' | 'continue' | 'completed' | 'overdue';
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
   
+  public image!: string | IFile; // Should be associated with IFile model
   public attachments?: IFile[]; // Should be associated with IFile model
   public assignees?: IMember[]; // Should be associated with IMember[] or string[]
   // ✅ Mixin methods from Sequelize
@@ -68,7 +68,6 @@ class Project extends Model<IProject, ProjectCreation> implements IProject {
         image: {
           type: DataTypes.UUID,
           allowNull: false,
-          references: { model: 'files', key: 'id' },
         },
         createdBy: {
           type: DataTypes.UUID,
