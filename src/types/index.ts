@@ -38,6 +38,7 @@ export interface IMember extends IUser {
 export interface IFile {
   id: string;
   name: string;
+  mimeType: string;
   url: string;
   size: number;
 }

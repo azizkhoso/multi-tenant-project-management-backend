@@ -12,7 +12,7 @@ export async function newProject(req: Request, res: Response) {
     image: yup.string().required('Project thumbnail image is required')
   })).validateSync({ ...req.body, image: req.file?.originalname });
   // create image file record
-  const fileRec = await saveFile(req.file?.originalname!, req.file!.buffer);
+  const fileRec = await saveFile(req.file?.originalname!, req.file!.mimetype, req.file!.buffer);
   const prj = await createProject({
     ...data,
     image: fileRec.id,

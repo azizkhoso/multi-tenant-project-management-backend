@@ -1,8 +1,9 @@
 import fs from "fs";
 import path from "path";
 import FileModel from "../models/File";
+import Exception from "../utils/Exception";
 
-export async function saveFile(fileName: string, fileBuffer: Buffer) {
+export async function saveFile(fileName: string, mimeType: string, fileBuffer: Buffer) {
   // save buffer to local storage in `files` folder
   // ensure the `files` folder exists
   const filesDir = path.join(__dirname, "../../files");
@@ -12,6 +13,7 @@ export async function saveFile(fileName: string, fileBuffer: Buffer) {
   const savedData = await FileModel.create({
     name: 'dummy' + Date.now(), // update later
     size: fileBuffer.length,
+    mimeType,
     url: 'dummy' + Date.now(), // update later
   });
   // construct file path
@@ -28,18 +30,18 @@ export async function saveFile(fileName: string, fileBuffer: Buffer) {
 }
 
 export async function getFileById(id: string) {
-  const file = await FileModel.findByPk(id);
-  if (!file) return null;
+  const file = (await FileModel.findByPk(id))?.toJSON();
+  if (!file) throw new Exception({ code: 'NOT_FOUND', data: { resource: 'File' } });
   const filesDir = path.join(__dirname, "../../files");
   const pathname = path.join(filesDir, file.id + path.extname(file.name));
-  if (!fs.existsSync(pathname)) return null;
+  if (!fs.existsSync(pathname)) throw new Exception({ code: 'NOT_FOUND', data: { resource: 'File' } });
   const fileBuffer = fs.readFileSync(pathname);
   return { file, fileBuffer };
 }
 
 export async function deleteFileById(id: string) {
   const file = await FileModel.findByPk(id);
-  if (!file) return false;
+  if (!file) throw new Exception({ code: 'NOT_FOUND', data: { resource: 'File' } });
   const filesDir = path.join(__dirname, "../../files");
   const pathname = path.join(filesDir, file.id + path.extname(file.name));
   if (fs.existsSync(pathname)) {

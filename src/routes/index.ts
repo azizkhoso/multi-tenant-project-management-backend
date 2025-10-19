@@ -4,6 +4,7 @@ import authenticationRoutes from './authentication';
 import companyRoutes from './company';
 import memberRoutes from './member';
 import projectRoutes from './project';
+import fileRoutes from './file';
 
 const router = express.Router();
 
@@ -16,5 +17,7 @@ router.use('/companies', companyRoutes);
 router.use('/members', memberRoutes);
 
 router.use('/projects', projectRoutes);
+
+router.use('/files', fileRoutes);
 
 export default router;

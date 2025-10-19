@@ -6,6 +6,7 @@ type FileCreation = Optional<IFile, 'id' | 'url'>;
 class File extends Model<IFile, FileCreation> implements IFile {
   public id!: string;
   public name!: string;
+  public mimeType!: string;
   public url!: string;
   public size!: number;
   public readonly createdAt!: Date;
@@ -20,6 +21,10 @@ class File extends Model<IFile, FileCreation> implements IFile {
           primaryKey: true,
         },
         name: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        mimeType: {
           type: DataTypes.STRING,
           allowNull: false,
         },
